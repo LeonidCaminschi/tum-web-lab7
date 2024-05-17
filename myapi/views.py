@@ -73,4 +73,21 @@ class MovieCreateView(APIView):
         movie_url = request.data.get('movie_url')
         movie = Movie.objects.create(title=title, image_url=image_url, movie_url=movie_url)
         return Response({'message': 'Movie created successfully!', 'movie': str(movie)})
+    
+class MovieListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        if not request.user.has_perm('myapi.view_movie'):  # Replace 'app_label' with your app's label
+            return Response({'error': 'You do not have permission to view a movie'}, status=403)
+        
+        movies = Movie.objects.all()
+        paginator = Paginator(movies, 10)
+        
+        page_number = request.query_params.get('page')
+        page_obj = paginator.get_page(page_number)
+        
+        movies_list = [{'title': movie.title, 'image_url': movie.image_url, 'movie_url': movie.movie_url} for movie in page_obj]
+        return Response(movies_list)
+
 
