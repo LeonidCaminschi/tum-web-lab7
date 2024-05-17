@@ -90,4 +90,22 @@ class MovieListView(APIView):
         movies_list = [{'title': movie.title, 'image_url': movie.image_url, 'movie_url': movie.movie_url} for movie in page_obj]
         return Response(movies_list)
 
+class MovieDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        if not request.user.has_perm('myapi.delete_movie'):  # Replace 'app_label' with your app's label
+            return Response({'error': 'You do not have permission to delete a movie'}, status=403)
+
+        title = request.data.get('title')
+        image_url = request.data.get('image_url')
+        movie_url = request.data.get('movie_url')
+        try:
+            movie = Movie.objects.get(title=title, image_url=image_url, movie_url=movie_url)
+            movie.delete()
+            return Response({'message': 'Movie deleted successfully!'}, status=200)
+        except Movie.DoesNotExist:
+            return Response({'error': 'Movie not found'}, status=404)
+
+
 
