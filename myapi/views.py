@@ -44,3 +44,19 @@ class RegisterView(APIView):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }, status=201)
+    
+class LoginView(APIView):
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(username=username, password=password)
+        if user is None:
+            return Response({'error': 'Invalid credentials'}, status='400')
+        refresh = RefreshToken.for_user(user)
+        refresh['role'] = list(user.groups.values_list('name', flat=True))
+        refresh['permissions'] = list(user.user_permissions.values_list('codename', flat=True))
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        })
