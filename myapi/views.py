@@ -60,3 +60,17 @@ class LoginView(APIView):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         })
+    
+class MovieCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not request.user.has_perm('myapi.add_movie'):  # Replace 'app_label' with your app's label
+            return Response({'error': 'You do not have permission to add a movie'}, status=403)
+
+        title = request.data.get('title')
+        image_url = request.data.get('image_url')
+        movie_url = request.data.get('movie_url')
+        movie = Movie.objects.create(title=title, image_url=image_url, movie_url=movie_url)
+        return Response({'message': 'Movie created successfully!', 'movie': str(movie)})
+
