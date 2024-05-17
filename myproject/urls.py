@@ -36,14 +36,4 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('myapi.urls')),
-    path('api/login', views.LoginView.as_view(), name='login'),
-    path('api/create-movie/', views.MovieCreateView.as_view(), name='create_movie'),
-    path('api/list-movies/', views.MovieListView.as_view(), name='list_movies'),
-    path('api/delete-movie/', views.MovieDeleteView.as_view(), name='delete_movie'),
-    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/register/', views.RegisterView.as_view(), name='register'),
 ]
